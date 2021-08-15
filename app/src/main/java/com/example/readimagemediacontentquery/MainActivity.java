@@ -3,6 +3,7 @@ package com.example.readimagemediacontentquery;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -17,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.example.readimagemediacontentquery.adapter.RecyclerImageAdapter;
 import com.example.readimagemediacontentquery.model.Image;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,26 +30,25 @@ public class MainActivity extends AppCompatActivity {
     private List<Image> imageList=new ArrayList<Image>();
     private Integer READ_CODE=100;
     ImageView imageView;
-    GridView gridView;
-
+    RecyclerView recyclerView;
+    RecyclerImageAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        gridView=findViewById(R.id.gird);
+        recyclerView=findViewById(R.id.recyclerView);
         if(ActivityCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED)
             loadImgae();
         else
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},READ_CODE);
     }
 
-    class ImageAdapter extends BaseAdapter {
+   /* class ImageAdapter extends BaseAdapter {
+        List<Image> imageList1=new ArrayList<Image>();
+
         public ImageAdapter(List<Image> imageList1) {
             this.imageList1 = imageList1;
         }
-
-        List<Image> imageList1=new ArrayList<Image>();
-
         @Override
         public int getCount() {
             return imageList1.size();
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             imageView.setImageURI(Uri.parse(image.getUrl()));
             return view;
         }
-    }
+    }*/
      void loadImgae(){
         Uri uri= MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         Cursor cur=getContentResolver().query(uri,null,null,null,null,null);
@@ -82,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
                 imageList.add(new Image(title,url));
             }
         }
-        ImageAdapter adapter=new ImageAdapter(imageList);
-        gridView.setAdapter(adapter);
+        adapter=new RecyclerImageAdapter(imageList);
+        recyclerView.setAdapter(adapter);
      }
 
     @Override
